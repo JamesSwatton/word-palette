@@ -1,28 +1,33 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+    <div id="app">
+        <input @change="populatePalette" id="file-selector" type="file" />
+        <textarea id="text" cols="30" rows="10"></textarea>
+        <Words :words="palette"></Words>
+    </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import Words from "./components/Words";
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+    name: "App",
+    components: {
+        Words
+    },
+    data() {
+        return {
+            palette: []
+        };
+    },
+    methods: {
+        populatePalette(ev) {
+            const file = ev.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = e => (this.palette = e.target.result.split(" "));
+            reader.readAsText(file);
+        }
+    }
+};
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<style></style>
