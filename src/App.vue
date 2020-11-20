@@ -9,6 +9,8 @@
 <script>
 import { eventBus } from "./main";
 import Words from "./components/Words";
+import Stopwords from "./helpers/stopwords.json";
+//const stopwords = JSON.parse(Stopwords)
 export default {
     name: "App",
     components: {
@@ -26,13 +28,14 @@ export default {
             const reader = new FileReader();
 
             reader.onload = e => {
-                this.palette = e.target.result.split(" ");
-                this.persist("palette", JSON.stringify(this.palette))
+                const cleanWords = this.createWords(e.target.result);
+                this.palette = cleanWords;
+                this.persist("palette", JSON.stringify(this.palette));
             };
             reader.readAsText(file);
         },
         persist(key, value) {
-            localStorage.setItem(key, value)
+            localStorage.setItem(key, value);
         },
         addWordToTextSting(word) {
             this.textString += ` ${word}`;
@@ -49,6 +52,27 @@ export default {
                     localStorage.removeItem("palette");
                 }
             }
+        },
+        createWords(string) {
+            console.log(Stopwords.stopwords);
+            let cleanWords = string
+                .replace(/\s+/g, " ")
+                .split(" ")
+                .map(word => {
+                    const match = word.match(/\w+\S?\w+|\w/);
+                    if (match) {
+                        if (
+                            Stopwords.stopwords.includes(match[0].toLowerCase())
+                        ) {
+                            return match[0];
+                        } else if (/'s/.test(match[0])) {
+                            return match[0].replace(/'s/, "");
+                        } else {
+                            return match[0];
+                        }
+                    }
+                });
+            return cleanWords;
         }
     },
     created() {
