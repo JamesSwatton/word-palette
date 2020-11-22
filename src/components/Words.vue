@@ -1,8 +1,8 @@
 <template>
     <div id="words">
         <button
-            @click="emitWord"
             v-for="(word, i) in words"
+            @click="emitWord($event, i)"
             :key="i"
             class="word"
             :value="word"
@@ -18,9 +18,11 @@ export default {
     name: "Words",
     props: ["words"],
     methods: {
-        emitWord(ev) {
-            eventBus.$emit("selectedWord", ev.target.value);
-        }
+        emitWord(ev, i) {
+            let word = ev.target.value;
+            eventBus.$emit("selectedWord", {word: word, index: i});
+            
+        },
     }
 };
 </script>
