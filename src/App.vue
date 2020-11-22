@@ -3,12 +3,14 @@
         <input @change="populatePalette" id="file-selector" type="file" />
         <textarea v-model="textString" id="text" cols="30" rows="10"></textarea>
         <button @click="reshuffle" id="shuffle">Shuffle</button>
+        <button @click="saveTxt">Save</button>
         <Words :words="shuffledPalette"></Words>
     </div>
 </template>
 
 <script>
 import { eventBus } from "./main";
+import { saveAs } from 'file-saver'
 import Words from "./components/Words";
 import Stopwords from "./helpers/stopwords.json";
 export default {
@@ -94,10 +96,15 @@ export default {
             return w;
         },
         reshuffle() {
-            this.shuffledPalette = this.shuffleWords(this.palette);
+            this.shuffledPalette = this.shuffleWords(this.shuffledPalette);
         },
         removeWord(array, i) {
             array.splice(i, 1);
+        },
+        saveTxt() {
+            var blob = new Blob([this.textString],
+                { type: "text/plain;charset=utf-8" });
+            saveAs(blob, "newPalette.txt");
         }
     },
     created() {
